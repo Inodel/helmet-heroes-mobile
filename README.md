@@ -1,5 +1,7 @@
 # Mobile Helmet Heroes
 
+Controls start hidden to keep login unobstructed. Tap **Show controls** at the top left after logging in. Tap **Hide controls** to hide movement, actions, and menus again; held inputs are released immediately. Each new page load starts hidden.
+
 Android landscape WebView wrapper for https://hh-rewritten.com/play, with green touch controls inspired by the supplied references, simultaneous movement/action input, and an expandable menu. No game artwork is redistributed.
 
 Open this folder in Android Studio, select JDK 17 for Gradle, sync, then Build > Build APK(s). Requires Android SDK 35 and Gradle 8.9. A Gradle wrapper is not bundled. With Gradle installed, run `gradle :app:assembleDebug`.

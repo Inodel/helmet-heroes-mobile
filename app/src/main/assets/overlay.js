@@ -35,6 +35,26 @@
  .settings{pointer-events:auto;position:absolute;inset:8% 18%;background:#163d25f5;border:3px solid #89bd55;border-radius:12px;padding:16px;overflow:auto}.settings label{display:inline-flex;flex-direction:column;margin:5px;font-size:13px}.settings input{width:110px;padding:6px}.settings button{padding:8px;margin:8px}.settings p{font-size:13px}
  </style><div class="pad"><button class="up" data-key="Up" aria-label="Move up">▲</button><button class="left" data-key="Left" aria-label="Move left">◀</button><button class="right" data-key="Right" aria-label="Move right">▶</button><button class="down" data-key="Down" aria-label="Move down">▼</button></div><div class="actions"><button class="block" data-key="Block">BLOCK</button><button data-key="Jump">JUMP</button><button data-key="Attack">ATTACK</button></div><button class="burger" aria-label="Open menu" aria-expanded="false">☰</button><nav class="menu hidden">${['Missions','Character','Social','Items','Map','Hero-pedia','Payvault','Options'].map(x=>`<button data-key="${x}">${x}</button>`).join('')}<button id="mapping">Controls ⚙</button></nav><section class="settings hidden"><b>Control mappings</b><p>Match these keyboard codes to the game's settings. Menu shortcuts are provisional. Examples: KeyA, Space, ArrowUp, Escape.</p>${Object.keys(defaults).map(x=>`<label>${x}<input data-map="${x}" aria-label="${x} keyboard code"></label>`).join('')}<div><button id="save">Save</button><button id="close">Close</button></div></section>`;
  const held = new Map();
+ // Start unobstructed on every page load; the player enables controls after login.
+ const toggle = document.createElement('button');
+ toggle.id = 'visibility'; toggle.textContent = 'Show controls';
+ toggle.setAttribute('aria-pressed', 'false');
+ toggle.style.cssText = 'position:absolute;top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));min-height:40px;padding:6px 12px;border-radius:20px;font-size:13px';
+ root.append(toggle);
+ const controlPanels = ['.pad', '.actions', '.burger'].map(selector => root.querySelector(selector));
+ let controlsVisible = false;
+ function setControlsVisible(visible) {
+  releaseAll();
+  controlsVisible = visible;
+  controlPanels.forEach(panel => panel.classList.toggle('hidden', !visible));
+  root.querySelector('.menu').classList.add('hidden');
+  root.querySelector('.settings').classList.add('hidden');
+  root.querySelector('.burger').setAttribute('aria-expanded', 'false');
+  toggle.textContent = visible ? 'Hide controls' : 'Show controls';
+  toggle.setAttribute('aria-pressed', String(visible));
+ }
+ toggle.onclick = () => setControlsVisible(!controlsVisible);
+ setControlsVisible(false);
  function emit(code,down) {
   const key = code === 'Space' ? ' ' : code.startsWith('Key') ? code.slice(3).toLowerCase() : code;
   const num = code === 'Space' ? 32 : code === 'Escape' ? 27 : ({ArrowLeft:37,ArrowUp:38,ArrowRight:39,ArrowDown:40}[code] || key.toUpperCase().charCodeAt(0));
