@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<application xmlns="http://ns.adobe.com/air/application/50.2">
+ <id>com.hhrmobile.airprototype</id>
+ <versionNumber>0.1.0</versionNumber>
+ <filename>HelmetHeroesAIR</filename>
+ <name>Helmet Heroes AIR Prototype</name>
+ <initialWindow>
+  <content>MobileLauncher.swf</content><visible>true</visible>
+  <aspectRatio>landscape</aspectRatio><autoOrients>false</autoOrients>
+  <fullScreen>true</fullScreen><renderMode>direct</renderMode><depthAndStencil>true</depthAndStencil>
+ </initialWindow>
+ <supportedProfiles>mobileDevice</supportedProfiles>
+ <android><manifestAdditions><![CDATA[<manifest android:installLocation="auto">
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <application android:hardwareAccelerated="true"/>
+ </manifest>]]></manifestAdditions></android>
+</application>
