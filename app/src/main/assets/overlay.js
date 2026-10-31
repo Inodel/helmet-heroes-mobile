@@ -19,6 +19,8 @@
  window.visualViewport?.addEventListener('resize', fitControls);
  window.visualViewport?.addEventListener('scroll', fitControls);
  fitControls();
+ let widthPercent=100;
+ try { const saved=Number(localStorage.getItem('hh-mobile-width')); if(Number.isFinite(saved)&&saved>=50&&saved<=150)widthPercent=saved; } catch {}
  let pending=false;
  function fitPage(){
   pending=false;const body=document.body;if(!body)return;
@@ -26,7 +28,8 @@
   body.style.transform='none';body.style.width=Math.max(980,w)+'px';
   const cw=Math.max(body.scrollWidth,body.offsetWidth),ch=Math.max(body.scrollHeight,body.offsetHeight,1);
   const scale=Math.min(1,w/cw,h/ch);
-  body.style.transform='translate('+Math.max(0,(w-cw*scale)/2)+'px,'+Math.max(0,(h-ch*scale)/2)+'px) scale('+scale+')';
+  const scaleX=scale*widthPercent/100;
+  body.style.transform='translate('+((w-cw*scaleX)/2)+'px,'+Math.max(0,(h-ch*scale)/2)+'px) scale('+scaleX+','+scale+')';
  }
  function scheduleFit(){if(!pending){pending=true;requestAnimationFrame(fitPage)}}
  window.addEventListener('resize',scheduleFit);
@@ -48,7 +51,17 @@
  .actions button{width:calc(15*var(--u));height:calc(15*var(--u));border-radius:50%;font-size:calc(2.4*var(--u))}.actions .block{width:calc(10*var(--u));height:calc(10*var(--u));align-self:flex-start;font-size:calc(1.8*var(--u))}
  .hidden{display:none!important}
  .settings{pointer-events:auto;position:absolute;inset:8% 18%;background:#163d25f5;border:3px solid #89bd55;border-radius:12px;padding:16px;overflow:auto}.settings label{display:inline-flex;flex-direction:column;margin:5px;font-size:13px}.settings input{width:110px;padding:6px}.settings button{padding:8px;margin:8px}.settings p{font-size:13px}
- </style><div class="pad"><button class="up" data-key="Up" aria-label="Move up">▲</button><button class="left" data-key="Left" aria-label="Move left">◀</button><button class="right" data-key="Right" aria-label="Move right">▶</button><button class="down" data-key="Down" aria-label="Move down">▼</button></div><div class="actions"><button class="block" data-key="Block">BLOCK</button><button data-key="Jump">JUMP</button><button data-key="Attack">ATTACK</button></div><button id="mapping" class="hidden" style="position:absolute;right:12px;top:8px;padding:8px">Controls ⚙</button><section class="settings hidden"><b>Control mappings</b><p>Match these keyboard codes to the game's settings. Examples: KeyA, Space, ArrowUp, Escape.</p>${Object.keys(defaults).map(x=>`<label>${x}<input data-map="${x}" aria-label="${x} keyboard code"></label>`).join('')}<div><button id="save">Save</button><button id="close">Close</button></div></section>`;
+ </style><div class="pad"><button class="up" data-key="Up" aria-label="Move up">▲</button><button class="left" data-key="Left" aria-label="Move left">◀</button><button class="right" data-key="Right" aria-label="Move right">▶</button><button class="down" data-key="Down" aria-label="Move down">▼</button></div><div class="actions"><button class="block" data-key="Block">BLOCK</button><button data-key="Jump">JUMP</button><button data-key="Attack">ATTACK</button></div><button id="mapping" class="hidden" style="position:absolute;right:12px;top:8px;padding:8px">Settings ⚙</button><section class="settings hidden"><b>Display and controls</b><div><label style="display:flex">Game width <output id="width-value">100%</output><input id="game-width" type="range" min="50" max="150" step="1" value="100" style="width:100%;min-height:40px" aria-label="Game width"></label><button id="width-reset">Reset width</button><p>Adjusts width without changing height. 100% uses automatic fit. Wider settings may crop the sides. Changes save automatically.</p></div><b>Control mappings</b><p>Match these keyboard codes to the game's settings. Examples: KeyA, Space, ArrowUp, Escape.</p>${Object.keys(defaults).map(x=>`<label>${x}<input data-map="${x}" aria-label="${x} keyboard code"></label>`).join('')}<div><button id="save">Save</button><button id="close">Close</button></div></section>`;
+ const widthSlider=root.querySelector('#game-width'),widthValue=root.querySelector('#width-value');
+ function updateWidth(value){
+  widthPercent=Math.max(50,Math.min(150,Number(value)||100));
+  widthSlider.value=String(widthPercent);widthValue.textContent=widthPercent+'%';
+  try{localStorage.setItem('hh-mobile-width',String(widthPercent))}catch{}
+  scheduleFit();
+ }
+ widthSlider.value=String(widthPercent);widthValue.textContent=widthPercent+'%';
+ widthSlider.oninput=()=>updateWidth(widthSlider.value);
+ root.querySelector('#width-reset').onclick=()=>updateWidth(100);
  const held = new Map();
  // Start unobstructed on every page load; the player enables controls after login.
  const toggle = document.createElement('button');
