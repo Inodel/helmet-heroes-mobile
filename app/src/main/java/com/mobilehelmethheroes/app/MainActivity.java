@@ -20,7 +20,10 @@ public class MainActivity extends Activity {
         game.getSettings().setJavaScriptEnabled(true);
         game.getSettings().setDomStorageEnabled(true);
         game.getSettings().setUseWideViewPort(true);
-        game.getSettings().setLoadWithOverviewMode(true);
+        game.getSettings().setLoadWithOverviewMode(false);
+        game.setInitialScale(100);
+        game.getSettings().setSupportZoom(false);
+        game.getSettings().setTextZoom(100);
         game.getSettings().setAllowFileAccess(false);
         game.getSettings().setAllowContentAccess(false);
         try (InputStream stream = getAssets().open("overlay.js")) {

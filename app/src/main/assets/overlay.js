@@ -1,7 +1,24 @@
 (() => {
  if (document.getElementById('hh-mobile')) return;
+ // Use the phone's viewport instead of WebView's desktop-width fallback.
+ let viewport = document.querySelector('meta[name="viewport"]');
+ if (!viewport) { viewport = document.createElement('meta'); viewport.name = 'viewport'; document.head.append(viewport); }
+ viewport.content = 'width=device-width, initial-scale=1, viewport-fit=cover';
+ const sizing = document.createElement('style');
+ sizing.textContent = 'html,body{margin:0!important;width:100%!important;min-width:0!important;overflow:hidden!important}canvas{max-width:100vw!important;max-height:100dvh!important;object-fit:contain!important}';
+ document.head.append(sizing);
  const host = document.createElement('div'); host.id = 'hh-mobile'; document.documentElement.append(host);
  const root = host.attachShadow({mode:'open'});
+ function fitControls() {
+  const v = window.visualViewport;
+  const width = v ? v.width : window.innerWidth, height = v ? v.height : window.innerHeight;
+  Object.assign(host.style, {position:'fixed',inset:'auto',left:`${v ? v.offsetLeft : 0}px`,top:`${v ? v.offsetTop : 0}px`,width:`${width}px`,height:`${height}px`});
+  host.style.setProperty('--u', `${Math.min(width / 100, height / 50)}px`);
+ }
+ window.addEventListener('resize', fitControls);
+ window.visualViewport?.addEventListener('resize', fitControls);
+ window.visualViewport?.addEventListener('scroll', fitControls);
+ fitControls();
  const defaults = {Left:'ArrowLeft',Right:'ArrowRight',Up:'ArrowUp',Down:'ArrowDown',Jump:'Space',Attack:'KeyA',Block:'KeyS',Missions:'KeyQ',Character:'KeyC',Social:'KeyF',Items:'KeyI',Map:'KeyM','Hero-pedia':'KeyH',Payvault:'KeyP',Options:'Escape'};
  let keys; try { keys = {...defaults,...JSON.parse(localStorage.getItem('hh-mobile-keys') || '{}')}; } catch { keys = {...defaults}; }
  root.innerHTML = `<style>
