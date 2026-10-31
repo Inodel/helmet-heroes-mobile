@@ -21,21 +21,22 @@
  fitControls();
  let widthPercent=100;
  try { const saved=Number(localStorage.getItem('hh-mobile-width')); if(Number.isFinite(saved)&&saved>=50&&saved<=150)widthPercent=saved; } catch {}
- let pending=false;
+ // Refit on size changes, not every HUD/chat DOM update.
+ let pending=false,lastWidth=0,lastTransform='';
  function fitPage(){
   pending=false;const body=document.body;if(!body)return;
   const w=window.innerWidth,h=window.innerHeight;
-  body.style.transform='none';body.style.width=Math.max(980,w)+'px';
+  const layoutWidth=Math.max(980,w);
+  if(layoutWidth!==lastWidth){body.style.width=layoutWidth+'px';lastWidth=layoutWidth;}
   const cw=Math.max(body.scrollWidth,body.offsetWidth),ch=Math.max(body.scrollHeight,body.offsetHeight,1);
-  const scale=Math.min(1,w/cw,h/ch);
-  const scaleX=scale*widthPercent/100;
-  body.style.transform='translate('+((w-cw*scaleX)/2)+'px,'+Math.max(0,(h-ch*scale)/2)+'px) scale('+scaleX+','+scale+')';
+  const scale=Math.min(1,w/cw,h/ch),scaleX=scale*widthPercent/100;
+  const transform='translate('+((w-cw*scaleX)/2)+'px,'+Math.max(0,(h-ch*scale)/2)+'px) scale('+scaleX+','+scale+')';
+  if(transform!==lastTransform){body.style.transform=transform;lastTransform=transform;}
  }
- function scheduleFit(){if(!pending){pending=true;requestAnimationFrame(fitPage)}}
+ function scheduleFit(){if(!pending){pending=true;setTimeout(()=>requestAnimationFrame(fitPage),100)}}
  window.addEventListener('resize',scheduleFit);
  window.visualViewport?.addEventListener('resize',scheduleFit);
  document.addEventListener('load',scheduleFit,true);
- new MutationObserver(scheduleFit).observe(document.body,{childList:true,subtree:true});
  new ResizeObserver(scheduleFit).observe(document.body);
  scheduleFit();
  const defaults = {Left:'ArrowLeft',Right:'ArrowRight',Up:'ArrowUp',Down:'ArrowDown',Jump:'Space',Attack:'KeyA',Block:'KeyS'};
@@ -43,7 +44,7 @@
  root.innerHTML = `<style>
  :host{position:fixed;inset:0;z-index:2147483647;pointer-events:none;font-family:Arial,sans-serif;color:white;--u:min(1vw,2vh)}
  *{box-sizing:border-box}button{pointer-events:auto;touch-action:none;user-select:none;color:white;font-weight:900;font-style:italic;text-shadow:1px 2px #16350c;border:3px solid #22451b;background:radial-gradient(circle at 35% 25%,#bcf693,#49a62e 58%,#227b19);box-shadow:inset 0 0 0 2px #93cf70,0 2px 3px #102b19;cursor:pointer}
- button:active,button.held{filter:brightness(1.4);transform:scale(.94)}
+ button:active,button.held{transform:scale(.94)}
  .pad{position:absolute;left:max(12px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));width:calc(20*var(--u));height:calc(20*var(--u));border-radius:50%;background:#326f26a8;border:3px solid #244520;pointer-events:none}
  .pad button{position:absolute;width:36%;height:36%;border:0;box-shadow:none;background:transparent;font-size:calc(4*var(--u));padding:0}
  .up{left:32%;top:0}.down{left:32%;bottom:0}.left{top:32%;left:0}.right{top:32%;right:0}
