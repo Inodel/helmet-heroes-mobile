@@ -5,3 +5,4 @@ local.properties
 .idea/
 air-mobile/private/
 air-mobile/output/
+AIRSDKManager_*.msi

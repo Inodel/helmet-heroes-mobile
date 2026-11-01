@@ -2,7 +2,7 @@ param([Parameter(Mandatory=$true)][string]$AirSdk)
 $ErrorActionPreference = 'Stop'
 $project = $PSScriptRoot
 $sdkRoot = (Resolve-Path -LiteralPath $AirSdk).Path
-foreach ($tool in @('lib\mxmlc.jar','lib\adt.jar')) {
+foreach ($tool in @('bin\amxmlc.bat','lib\adt.jar')) {
  if (!(Test-Path -LiteralPath (Join-Path $sdkRoot $tool))) { throw "AIR SDK missing $tool" }
 }
 $privateDir = Join-Path $project 'private'
@@ -14,7 +14,7 @@ if (!(Test-Path -LiteralPath $game)) {
 }
 if ((Get-Item -LiteralPath $game).Length -lt 100000) { throw 'Game download is unexpectedly small' }
 $launcher = Join-Path $outputDir 'MobileLauncher.swf'
-& java -jar (Join-Path $sdkRoot 'lib\mxmlc.jar') "-load-config=$sdkRoot\frameworks\air-config.xml" '-swf-version=41' "-output=$launcher" (Join-Path $project 'src\MobileLauncher.as')
+& (Join-Path $sdkRoot 'bin\amxmlc.bat') '-swf-version=41' "-output=$launcher" (Join-Path $project 'src\MobileLauncher.as')
 if ($LASTEXITCODE) { throw 'ActionScript compilation failed' }
 $cert = Join-Path $privateDir 'prototype.p12'
 if (!(Test-Path -LiteralPath $cert)) {

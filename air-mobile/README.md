@@ -16,6 +16,10 @@ Install the official AIR SDK after reviewing its license at https://airsdk.wxlif
 
 The build downloads the game from the desktop launcher's HTTPS URL, compiles the launcher, creates a development certificate, and packages an ARM64 APK with AIR. Downloaded game files, SDKs, certificates and output are ignored by Git.
 
-The prototype uses a separate app ID. Controls start hidden. Touch controls use provisional arrows/Space/A/S keyboard events. Width buttons affect the display-list loader; the game's independently managed Stage3D viewport may need adaptation. Dynamic code loading or desktop-only APIs may also need changes. Compilation has not yet been verified because the AIR SDK is not installed.
+The prototype uses a separate app ID. Controls start hidden. Touch controls use provisional arrows/Space/A/S keyboard events. Width buttons affect the display-list loader; the game's independently managed Stage3D viewport may need adaptation. Dynamic code loading or desktop-only APIs may also need changes.
+
+The launcher compiled with AIR SDK 51.5.1.1 on November 1, 2026. Standard ADT packaging encountered a local Gradle loopback error. The test APK was instead built from ADT's android-studio export with the installed Android SDK tools, using Android's built-in multidex support (minimum Android 8) and the ARM64 runtime. Signature verification and 16 KB ZIP alignment passed. This does not establish successful startup or gameplay. The standard build command above still requires a functioning Gradle environment.
+
+Local outputs: `output/Helmet-Heroes-AIR-prototype.apk` and its ZIP. These are test artifacts and have not been uploaded to GitHub Releases.
 
 This prototype bundles a snapshot of the game; it does not implement automatic game updates. Runtime networking is controlled by the embedded game. Static inspection does not establish which server it will reach successfully on Android.
